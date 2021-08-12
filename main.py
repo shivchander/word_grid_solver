@@ -119,16 +119,65 @@ def solve_grid(grid, word_len, opt):
     return out
 
 
+def test_random_grids(args):
+    naive_times = []
+    hashset_times = []
+    trie_times = []
+    for i in range(args.test_size):
+        grid = random_grid(args.size, args.size)
+        res = solve_grid(grid, 3, opt=args.opt)
+        naive_times.append(res['naive']['time'])
+        hashset_times.append(res['hashset']['time'])
+        trie_times.append(res['trie']['time'])
+
+    print('Average Times: \n')
+    print('naive: {}'.format(np.mean(np.array(naive_times))))
+    print('hashset: {}'.format(np.mean(np.array(hashset_times))))
+    print('trie: {}'.format(np.mean(np.array(trie_times))))
+
+    plt.plot(np.arange(args.test_size), naive_times, label='naive')
+    plt.plot(np.arange(args.test_size), hashset_times, label='hashset')
+    plt.plot(np.arange(args.test_size), trie_times, label='trie')
+    plt.title('Comparison of time taken for each algo')
+    plt.legend()
+    plt.xlabel('Random Sample #')
+    plt.ylabel('Time Taken')
+
+    plt.savefig('performance.png')
+
+
+def test_random_grid_sizes(args, algo='trie'):
+    """
+    :param args:
+    :param algo:
+    :return:
+    """
+    times = []
+    for i in range(2, args.test_max_gridsize+1):
+        grid = random_grid(i, i)
+        start = time.time()
+        res = solve_grid(grid, 3, opt=args.opt)
+        end = time.time()
+        times.append(end - start)
+
+    plt.plot(np.arange(args.test_max_gridsize), times)
+    plt.title('Time taken by {} with varying grid size'.format(algo))
+    plt.xlabel('Grid Size')
+    plt.ylabel('Time Taken')
+    plt.savefig('{}.png'.format(algo))
+
+
 def get_args():
     """
     :return:
     """
     parser = argparse.ArgumentParser(description='Find words in a Grid of letters')
-    parser.add_argument('-default', default=False, help="solve default board stored in grid.txt")
-    parser.add_argument('-random', default=True, help="solve a random board")
+    parser.add_argument('-default', default=True, help="solve default board stored in grid.txt")
+    parser.add_argument('-random', default=False, help="solve a random board")
     parser.add_argument('-test', default=False, help="test performance")
     parser.add_argument('-size', default=3, type=int, help="board size")
     parser.add_argument('-test_size', default=100, type=int, help="# of experiments to run")
+    parser.add_argument('-test_max_gridsize', default=5, type=int, help="maximum grid size")
     parser.add_argument('-opt', default="trie", type=str, help="trie/hashset/naive/all")
     args = parser.parse_args()
     return args
@@ -161,27 +210,4 @@ if __name__ == '__main__':
             print()
 
     if args.test:
-        naive_times = []
-        hashset_times = []
-        trie_times = []
-        for i in range(args.test_size):
-            grid = random_grid(args.size, args.size)
-            res = solve_grid(grid, 3, opt=args.opt)
-            naive_times.append(res['naive']['time'])
-            hashset_times.append(res['hashset']['time'])
-            trie_times.append(res['trie']['time'])
-
-        print('Average Times: \n')
-        print('naive: {}'.format(np.mean(np.array(naive_times))))
-        print('hashset: {}'.format(np.mean(np.array(hashset_times))))
-        print('trie: {}'.format(np.mean(np.array(trie_times))))
-
-        plt.plot(np.arange(args.test_size), naive_times, label='naive')
-        plt.plot(np.arange(args.test_size), hashset_times, label='hashset')
-        plt.plot(np.arange(args.test_size), trie_times, label='trie')
-        plt.title('Comparison of time taken for each algo')
-        plt.legend()
-        plt.xlabel('Random Sample #')
-        plt.ylabel('Time Taken')
-
-        plt.savefig('performance.png')
+        test_random_grids(args)

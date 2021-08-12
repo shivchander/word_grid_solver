@@ -5,8 +5,6 @@
 __author__ = "Shivchander Sudalairaj"
 __email__ = "sudalasr@mail.uc.edu"
 
-from board import Board
-
 
 class Solver:
     def __init__(self, board, trie, dictionary, minlen):
