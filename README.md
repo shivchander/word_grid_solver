@@ -215,13 +215,6 @@ Algo: naive
 	 Time: 0.21023201942443848
 ```
 
-### Note
+### Assumption
 
 * ```grid.txt``` is filled with the right dimensions and all the cells are valid lowercase alphabets
-
-
-
-
-
-
-
