@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-"""trie.py: Description of what foobar does."""
+"""
+trie.py: contains the definition and declaration of the trie class
+"""
 
 __author__ = "Shivchander Sudalairaj"
 __email__ = "sudalasr@mail.uc.edu"
@@ -18,8 +20,10 @@ class Trie:
 
     def insert_word(self, word):
         """
-        :param word:
-        :return:
+        inserts a word as a new branch or updates a branch to the trie
+
+        :param word: str - word to be added
+        :return: None
         """
         curr_node = self.trie
         for letter in word:
@@ -28,9 +32,10 @@ class Trie:
 
     def word_exists(self, word):
         """
-        :param word:
-        :param prune:
-        :return:
+        walks through the trie to check if the word is present
+
+        :param word: word to be searched
+        :return: bool - whether the word is found
         """
         curr_node = self.trie
         for ch in word:

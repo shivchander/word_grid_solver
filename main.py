@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-"""trie.py: Description of what foobar does."""
+"""
+main.py: contains the main fn to solve the word finder problem
+contains a few util functions
+User can solve the default grid using: python3 main.py
+"""
 
 __author__ = "Shivchander Sudalairaj"
 __email__ = "sudalasr@mail.uc.edu"
@@ -21,17 +25,21 @@ import numpy as np
 
 def load_grid(filename):
     """
-    :param filename:
-    :return:
+    reads the file and saves the content as a 2d list
+
+    :param filename: str - absolute path if the file is not part of the project
+    :return: list of lists - 2d grid
     """
     return [list(line.rstrip('\n')) for line in open(filename)]
 
 
 def random_grid(nrows, ncols):
     """
-    :param nrows:
-    :param ncols:
-    :return:
+    generates a 2d grid and fills it with random characters
+
+    :param nrows: int - number of rows
+    :param ncols: int - number of cols
+    :return: list of lists - 2d grid
     """
     grid = [[] for i in range(nrows)]
     for i in range(nrows):
@@ -41,13 +49,15 @@ def random_grid(nrows, ncols):
     return grid
 
 
-def build_trie(trie, word_list, unique_chars, word_len=0):
+def build_trie(trie, word_list, unique_chars, word_len=3):
     """
-    :param trie:
-    :param word_list:
-    :param unique_chars:
-    :param word_len:
-    :return:
+    builds a trie and adds the words from the list of words
+
+    :param trie: trie - empty trie root node
+    :param word_list: list - list of words to add to the trie
+    :param unique_chars: str - string of unique characters present in the grid
+    :param word_len: int - minimum length of words
+    :return: None - updates the tree object
     """
     for word in word_list:
         if len(word) >= word_len:
@@ -57,8 +67,11 @@ def build_trie(trie, word_list, unique_chars, word_len=0):
 
 def build_wordlist(filename, filter=False):
     """
-    :param filename:
-    :return:
+    reads the file with list of english dictionary words and loads it to the list
+
+    :param filename: str - absolute path if the file is not part of the project
+    :param filter: bool/str - default to False, takes a string of unique characters to filter
+    :return: list - list of words
     """
     if filter:
         return [word.rstrip('\n') for word in open(filename) if word[0] in filter]
@@ -66,26 +79,14 @@ def build_wordlist(filename, filter=False):
         return [word.rstrip('\n') for word in open(filename)]
 
 
-def build_trie(trie, word_list, unique_chars, word_len=3):
-    """
-    :param trie:
-    :param word_list:
-    :param unique_chars:
-    :param word_len:
-    :return:
-    """
-    for word in word_list:
-        if len(word) >= word_len:
-            if word[0] in unique_chars:
-                trie.insert_word(word)
-
-
 def solve_grid(grid, word_len, opt):
     """
-    :param grid:
-    :param word_len:
-    :param opt:
-    :return:
+    solves the word grid and outputs all the possible and valid words from the grid
+
+    :param grid: list of lists - 2d grid of characters
+    :param word_len: int - minimum length for a word to be considered
+    :param opt: str - choice between running trie/naive/both
+    :return: list - list of valid words found in the grid
     """
     b = Board(grid)
     t = Trie()
@@ -114,6 +115,12 @@ def solve_grid(grid, word_len, opt):
 
 
 def test_random_grids(args):
+    """
+    utility function to run experiment testing the performance of the algo with randomly generated grids of fized size
+
+    :param args: argparser obj - contains all the command line arguments
+    :return: None - Outputs average time taken and saves the plots to the project
+    """
     naive_times = []
     trie_times = []
     for i in range(args.test_size):
@@ -139,10 +146,12 @@ def test_random_grids(args):
 
 def test_random_grid_sizes(args):
     """
-    :param args:
-    :param algo:
-    :return:
+    utility function to run experiment testing the performance of the algo with randomly generated grids of different sizes
+
+    :param args: argparser obj - contains all the command line arguments
+    :return: None - saves the plots to the project
     """
+
     naive_times = []
     trie_times = []
     for i in range(2, args.test_max_gridsize+1):
@@ -164,12 +173,14 @@ def test_random_grid_sizes(args):
 
 def get_args():
     """
-    :return:
+    Parses command line arguments
+
+    :return: ArgParser obj - contains all the command line args
     """
     parser = argparse.ArgumentParser(description='Find words in a Grid of letters')
-    parser.add_argument('-default', default=False, help="solve default board stored in grid.txt")
+    parser.add_argument('-default', default=True, help="solve default board stored in grid.txt")
     parser.add_argument('-random', default=False, help="solve a random board")
-    parser.add_argument('-test', default=True, help="test performance")
+    parser.add_argument('-test', default=False, help="test performance")
     parser.add_argument('-size', default=4, type=int, help="board size")
     parser.add_argument('-test_size', default=100, type=int, help="# of experiments to run")
     parser.add_argument('-test_max_gridsize', default=10, type=int, help="maximum grid size")
@@ -180,6 +191,8 @@ def get_args():
 
 if __name__ == '__main__':
     args = get_args()
+
+    # default case - uses the current grid in project
     if args.default:
         grid = load_grid('grid.txt')
         print('Grid: ')
@@ -193,6 +206,7 @@ if __name__ == '__main__':
             print('\t Time: {}'.format(res[algo]['time']))
             print()
 
+    # generates and solves a random grid
     if args.random:
         grid = random_grid(args.size, args.size)
         print('Grid: ')
@@ -206,6 +220,7 @@ if __name__ == '__main__':
             print('\t Time: {}'.format(res[algo]['time']))
             print()
 
+    # runs performance measures on random grids
     if args.test:
         test_random_grids(args)
         test_random_grid_sizes(args)

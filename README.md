@@ -56,8 +56,7 @@ the dependency of this N. One way to do it would be to reverse the approach; mov
 words from the grid and check its validity. 
 
 
-### Optimizing
-
+### Trie-based Solution
 In order to optimize the way we store and access the wordlist we can:
 
 * Store the words in a hashset 
@@ -66,41 +65,19 @@ In order to optimize the way we store and access the wordlist we can:
 We can also use DFS with backtracking. And filter out words which don't start with letters not from the grid. 
 This will help us prune out whole branches in a trie and remove words in the hashset.
 
-### HashSet Solution:
-
-We start from the Board, using dfs from each cell. At each level of dfs, we check if the word formed so far is in the
-hashset. Since they use a hashing function, they have a constant access time
-
-* Load all the words of the english dictionary into a hashset
-* Iterate through all the cells in the board
-    * start dfs exploration from this node
-    * check if the word formed so far is in the hashset
-    * if yes, add it to words found
-        * if not explore its neighbors (every node other than its parent)
-        * recursively call dfs from its child
-
-#### Computation Analysis:
-
-Time Complexity:
-
-Assume a grid of size (MxM), the longest word is of len K and wordlist of size N.
-The max number of neighbors for a cell is 8.
-An upper bound on the max number of levels from each cell from dfs with backtracking would be 8 * 7^(k). As the max 
-neighbors will be 8 and we dont explore the parent.
-
-Thus time complexity = O(M * M * 8 * 7^K)
-
-Space Complexity: O(n) n: filtered words n < N
-
-
-### Trie-based Solution
+‘Trie’ also known as a prefix tree is a tree data structure used to store character keys. Each node in the trie has 
+children whose values (characters) lead to valid character keys.
 
 
 ## Performance Analysis:
 
-![Performance](performance.png)
+![Performance](random_grid_performance.png)
 
 This plot generates 100 random 3x3 grids and computes the time taken for each of the algorithm:
+
+![Performance](random_sizes_performance.png)
+
+
 
 ### Observations:
 

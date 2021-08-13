@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-"""trie.py: Description of what foobar does."""
+"""
+solver.py: contains the Solver class and its trie solve and naive solve functions
+
+This solves the word finder problem by using a naive method and then an optimized trie method
+"""
 
 __author__ = "Shivchander Sudalairaj"
 __email__ = "sudalasr@mail.uc.edu"
@@ -14,6 +18,17 @@ class Solver:
         self.minlen = minlen
 
     def trie_solve(self, trie, prune=True):
+        """
+        solves the word finder from grid using a dfs walk on the grid to generate possible strings and validates it
+        bu checking its existence in the trie
+
+        here we are parallely walking on both the grid and trie at the same time. Thus we dont search from the root of
+        the trie everytime. This saves a bunch of computes. The tree is also being pruned once the word is found.
+
+        :param trie: trie obj - fully built trie which stores the filtered english words
+        :param prune: bool - whether to prune the tree once the word is found
+        :return: list - list of words valid found in the grid
+        """
         def dfs(i, j, trie_node, prune):
 
             ch = grid[i][j]
@@ -30,7 +45,7 @@ class Solver:
 
             neighbors = board.neighbors((i, j))
             for (i_hat, j_hat) in neighbors:
-                if grid[i_hat][j_hat] == '#':
+                if grid[i_hat][j_hat] == '$':
                     continue
                 if not grid[i_hat][j_hat] in curr_node:
                     continue
@@ -62,6 +77,15 @@ class Solver:
         return words
 
     def naive_solve(self, wordlist):
+        """
+        solves the word grid problem with a naive method - This goes from the list of words to the grid.
+
+        The algorithm traverses through a list of unfiltered words. And for each word it checks whether it can be formed
+        from the grid.
+
+        :param wordlist: list - list of unfiltered words
+        :return: list - list of words valid found in the grid
+        """
         words = []
         for word in wordlist:
             if len(word) >= self.minlen:
