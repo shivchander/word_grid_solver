@@ -96,6 +96,14 @@ Space Complexity: O(n) n: filtered words n < N
 ### Trie-based Solution
 
 
+## Performance Analysis:
 
+![Performance](performance.png)
+
+This plot generates 100 random 3x3 grids and computes the time taken for each of the algorithm:
+
+### Observations:
+
+* Naive is clearly less optimal than 
 
 

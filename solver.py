@@ -7,63 +7,64 @@ __email__ = "sudalasr@mail.uc.edu"
 
 
 class Solver:
-    def __init__(self, board, trie, dictionary, minlen):
+    def __init__(self, board, minlen=3):
         self.board = board
-        self.trie = trie
-        self.dictionary = dictionary
         self.rows = board.rows
         self.cols = board.cols
         self.minlen = minlen
 
-    def dfs(self, i, j, visited, curr_word, words, opt):
-        """
-        :param i:
-        :param j:
-        :param visited:
-        :param curr_word:
-        :param words:
-        :param opt:
-        :return:
-        """
+    def trie_solve(self, trie, prune=True):
+        def dfs(i, j, trie_node, prune):
 
-        if (i, j) in visited:
-            return
-        ch = self.board.grid[i][j]
-        visited.append((i, j))
-        curr_word += ch
-        if opt == 'hashset':
-            if len(curr_word) >= self.minlen:
-                if curr_word in self.dictionary:
-                    words.append(curr_word)
-        else:
-            if self.trie.word_exists(curr_word):
-                words.append(curr_word)
+            ch = grid[i][j]
+            curr_node = trie_node[ch]
 
-        neighbors = self.board.neighbors((i, j))
-        for n in neighbors:
-            self.dfs(neighbors[n][0], neighbors[n][1], visited[::], curr_word, words, opt)
+            # check if curr_node is the end of the word
+            curr_node_val = curr_node.pop(terminator, False)
+            if curr_node_val:
+                if len(curr_node_val) >= minlen:
+                    words.append(curr_node_val)
+
+            # marking the board state as visited
+            grid[i][j] = '$'
+
+            neighbors = board.neighbors((i, j))
+            for (i_hat, j_hat) in neighbors:
+                if grid[i_hat][j_hat] == '#':
+                    continue
+                if not grid[i_hat][j_hat] in curr_node:
+                    continue
+                dfs(i_hat, j_hat, curr_node, prune)
+
+            # end of walk, mark the cells as unvisted
+            grid[i][j] = ch
+
+            # pruning
+            if prune:
+                if not curr_node:
+                    trie_node.pop(ch)
+
+        words = []
+        board = self.board
+        terminator = trie.terminator
+        trie = trie.trie
+        minlen = self.minlen
+        grid = self.board.grid
+        rows = self.rows
+        cols = self.cols
+
+        for row in range(rows):
+            for col in range(cols):
+                # check if there are words starting from this cell ch
+                if grid[row][col] in trie:
+                    dfs(row, col, trie, prune)
+
+        return words
 
     def naive_solve(self, wordlist):
-        """
-        :param wordlist:
-        :return:
-        """
         words = []
         for word in wordlist:
             if len(word) >= self.minlen:
                 if self.board.word_exist(word):
                     words.append(word)
-
-        return words
-
-    def solve(self, opt='trie'):
-        """
-        :param opt:
-        :return:
-        """
-        words = []
-        for i in range(self.rows):
-            for j in range(self.cols):
-                self.dfs(i, j, [], '', words, opt=opt)
-
         return words

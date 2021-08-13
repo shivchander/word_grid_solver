@@ -28,10 +28,10 @@ class Board:
         dis = [0, 1, 1, 1, 0, -1, -1, -1]
         djs = [-1, -1, 0, 1, 1, 1, 0, -1]
 
-        return {self.grid[i+di][j+dj]: (i+di, j+dj) for di, dj in zip(dis, djs)
-                if 0 <= i + di < self.rows and 0 <= (j + dj) < self.cols}
+        return [(i+di, j+dj) for di, dj in zip(dis, djs)
+                if 0 <= i + di < self.rows and 0 <= (j + dj) < self.cols]
 
-    def backtrack(self, i, j, suffix):
+    def backtrack(self, i, j, suffix, curr_grid):
         """
         :param i:
         :param j:
@@ -42,18 +42,20 @@ class Board:
         if len(suffix) == 0:
             return True
 
-        if self.grid[i][j] != suffix[0]:
+        if curr_grid[i][j] != suffix[0]:
             return False
 
         ret = False
-        self.grid[i][j] = '#'
+        curr_grid[i][j] = '#'
 
         neighbors = self.neighbors((i, j))
-        for n in neighbors:
-            ret = self.backtrack(neighbors[n][0], neighbors[n][1], suffix[1:])
-            if ret:
-                break
-        self.grid[i][j] = suffix[0]
+        for (ix, jx) in neighbors:
+            if curr_grid[ix][jx] != '#':
+                ret = self.backtrack(ix, jx, suffix[1:], curr_grid)
+                if ret:
+                    break
+
+        curr_grid[i][j] = suffix[0]
 
         return ret
 
@@ -62,9 +64,11 @@ class Board:
         :param word:
         :return:
         """
-        for row in range(self.rows):
-            for col in range(self.cols):
-                if self.backtrack(row, col, word):
-                    return True
+        curr_grid = self.grid.copy()
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if curr_grid[i][j] == word[0]:
+                    if self.backtrack(i, j, word, curr_grid):
+                        return True
 
         return False

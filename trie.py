@@ -12,37 +12,19 @@ class Trie:
     https://en.wikipedia.org/wiki/Trie
     """
 
-    def __init__(self, val='root'):             # null root
-        self.val = val
-        self.children = {}
-        self.parent = None          # bidirectional pointers
-        self.terminator = False     # flag denoting the end of the word
-
-    def __repr__(self):
-        return '<trie node representation>'
-
-    def __str__(self, level=0):
-        ret = "\t" * level + repr(self.val) + "\n"
-        for child in self.children:
-            ret += self.children[child].__str__(level+1)
-        return ret
-
-    def get_children(self):
-        return self.children
+    def __init__(self):
+        self.trie = {}
+        self.terminator = '$'
 
     def insert_word(self, word):
         """
         :param word:
         :return:
         """
-        curr_node = self
-        for ch in word:
-            if ch not in curr_node.children:
-                new_node = Trie(ch)
-                new_node.parent = curr_node
-                curr_node.children[ch] = new_node
-            curr_node = curr_node.children[ch]
-        curr_node.terminator = word
+        curr_node = self.trie
+        for letter in word:
+            curr_node = curr_node.setdefault(letter, {})
+        curr_node[self.terminator] = word
 
     def word_exists(self, word):
         """
@@ -50,22 +32,13 @@ class Trie:
         :param prune:
         :return:
         """
-        curr_node = self
+        curr_node = self.trie
         for ch in word:
-            if ch not in curr_node.children:
+            if ch not in curr_node:
                 return False
-            curr_node = curr_node.children[ch]
+            curr_node = curr_node[ch]
 
-        return bool(curr_node.terminator)
-
-    def prefix_exists(self, prefix):
-        """
-        :param prefix:
-        :return:
-        """
-        curr_node = self
-        for ch in prefix:
-            if ch not in curr_node.children:
-                return False
-            curr_node =  curr_node.children[ch]
-        return True
+        if self.terminator in curr_node:
+            return curr_node['$'] == word
+        else:
+            return False
