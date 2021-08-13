@@ -178,13 +178,13 @@ def get_args():
     :return: ArgParser obj - contains all the command line args
     """
     parser = argparse.ArgumentParser(description='Find words in a Grid of letters')
-    parser.add_argument('-default', default=True, help="solve default board stored in grid.txt")
-    parser.add_argument('-random', default=False, help="solve a random board")
-    parser.add_argument('-test', default=False, help="test performance")
-    parser.add_argument('-size', default=4, type=int, help="board size")
-    parser.add_argument('-test_size', default=100, type=int, help="# of experiments to run")
-    parser.add_argument('-test_max_gridsize', default=10, type=int, help="maximum grid size")
-    parser.add_argument('-opt', default="both", type=str, help="trie/naive/both")
+    parser.add_argument('-default', default=True, help="solve default board stored in grid.txt (bool)")
+    parser.add_argument('-random', default=False, help="solve a random board (bool)")
+    parser.add_argument('-test', default=False, help="test performance (bool)")
+    parser.add_argument('-size', default=4, type=int, help="board size (int)")
+    parser.add_argument('-test_size', default=100, type=int, help="# of experiments to run (int)")
+    parser.add_argument('-test_max_gridsize', default=10, type=int, help="maximum grid size (int)")
+    parser.add_argument('-opt', default="both", type=str, help="trie/naive/both (str)")
     args = parser.parse_args()
     return args
 

@@ -38,7 +38,7 @@ class Solver:
             curr_node_val = curr_node.pop(terminator, False)
             if curr_node_val:
                 if len(curr_node_val) >= minlen:
-                    words.append(curr_node_val)
+                    words.add(curr_node_val)
 
             # marking the board state as visited
             grid[i][j] = '$'
@@ -59,7 +59,7 @@ class Solver:
                 if not curr_node:
                     trie_node.pop(ch)
 
-        words = []
+        words = set()
         board = self.board
         terminator = trie.terminator
         trie = trie.trie
@@ -86,9 +86,9 @@ class Solver:
         :param wordlist: list - list of unfiltered words
         :return: list - list of words valid found in the grid
         """
-        words = []
+        words = set()
         for word in wordlist:
             if len(word) >= self.minlen:
                 if self.board.word_exist(word):
-                    words.append(word)
+                    words.add(word)
         return words
